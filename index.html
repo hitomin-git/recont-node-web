@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RECONT NODE</title>
+<style>
+:root{
+  --black:#080808;
+  --white:#f4f2ed;
+  --line:rgba(255,255,255,.18);
+  --muted:#8e8e8a;
+  --accent:#f0b36a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--black);color:var(--white);font-family:Arial,"Hiragino Sans","Yu Gothic",sans-serif}
+body{overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:78px;padding:0 32px;
+  display:flex;justify-content:space-between;align-items:center;
+  mix-blend-mode:difference;color:#fff;
+}
+.logo{font-size:13px;letter-spacing:.24em;font-weight:700}
+.menu{font-size:11px;letter-spacing:.18em;display:flex;gap:25px}
+
+.hero{
+  height:100vh;position:relative;overflow:hidden;
+  display:flex;align-items:flex-end;padding:0 5vw 8vh;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+   radial-gradient(circle at 70% 50%, rgba(79,109,171,.22), transparent 18%),
+   radial-gradient(circle at 65% 35%, rgba(120,72,145,.16), transparent 24%),
+   #05070a;
+}
+.hero-stars,.constellation-stars{
+ position:absolute;inset:0;opacity:.48;
+ background-image:
+   radial-gradient(circle,white 0 1px,transparent 1.2px),
+   radial-gradient(circle,white 0 .7px,transparent 1px);
+ background-size:110px 110px,180px 180px;
+ background-position:0 0,60px 30px
+}
+.hero-copy{position:relative;z-index:3;width:100%}
+.micro{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:#b7bbc3}
+.hero h1{
+ font-size:clamp(64px,11vw,170px);line-height:.82;
+ font-weight:500;letter-spacing:-.075em;margin:18px 0 28px;
+ max-width:1100px;
+}
+.hero-bottom{display:flex;justify-content:space-between;align-items:end;gap:30px}
+.hero-bottom p{max-width:590px;font-size:14px;line-height:2;color:#c6c8cf;margin:0}
+.scroll-label{font-size:10px;letter-spacing:.25em;writing-mode:vertical-rl}
+
+.statement{
+ min-height:100vh;background:var(--white);color:var(--black);
+ padding:15vh 6vw 10vh;display:grid;grid-template-columns:.8fr 1.2fr;gap:8vw;
+ align-items:center;
+}
+.statement .label{font-size:11px;letter-spacing:.3em;text-transform:uppercase}
+.statement h2{font-size:clamp(52px,8vw,126px);line-height:.95;letter-spacing:-.065em;font-weight:500;margin:0}
+.statement p{max-width:540px;font-size:15px;line-height:2}
+
+.marquee{
+ background:var(--white);color:var(--black);overflow:hidden;border-top:1px solid #ccc;border-bottom:1px solid #ccc;
+ padding:20px 0;
+}
+.marquee-track{
+ display:flex;width:max-content;gap:48px;font-size:15px;letter-spacing:.18em;text-transform:uppercase;
+ animation:marquee 18s linear infinite;
+}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+.constellation-wrap{height:680vh;position:relative}
+.constellation{
+ height:100vh;position:sticky;top:0;overflow:hidden;
+ background:#050609;
+}
+.constellation-intro{
+ position:absolute;z-index:20;left:5vw;top:13vh;max-width:650px;
+ transition:.5s opacity,.5s transform;
+}
+.constellation-intro.hide{opacity:0;transform:translateY(-20px)}
+.constellation-intro h2{
+ font-size:clamp(54px,7vw,108px);line-height:.92;letter-spacing:-.06em;font-weight:500;margin:15px 0 25px;
+}
+.constellation-intro p{font-size:14px;line-height:2;color:#b9bdc4}
+
+.space{
+ position:absolute;inset:0;
+ transform-origin:center;
+ will-change:transform; transition:transform .06s linear;
+}
+.center,.planet{
+ position:absolute;left:50%;top:50%;border-radius:50%;
+ transform:translate(-50%,-50%);
+}
+.center{
+ width:120px;height:120px;display:grid;place-items:center;text-align:center;
+ font-size:12px;letter-spacing:.15em;border:1px solid rgba(255,255,255,.25);
+ background:radial-gradient(circle at 35% 30%,#536d9e,#121b2e 50%,#06080d);
+ box-shadow:0 0 60px rgba(100,140,230,.26);z-index:5;
+}
+.planet{width:92px;height:92px;border:1px solid rgba(255,255,255,.28);z-index:6}
+.planet:before{
+ content:"";position:absolute;inset:-13px;border:1px solid rgba(255,255,255,.1);border-radius:50%;
+}
+.planet-name{
+ position:absolute;top:115%;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:12px;letter-spacing:.06em;
+}
+.p0{margin:-29vh 0 0 -8vw;background:radial-gradient(circle at 32% 30%,#e7fbff,#466faa 28%,#13233a 65%,#05090f)}
+.p1{margin:-3vh 0 0 -31vw;background:radial-gradient(circle at 32% 30%,#ffe4a7,#a76432 31%,#3a1f13 66%,#0e0705)}
+.p2{margin:-1vh 0 0 31vw;background:radial-gradient(circle at 32% 30%,#dbffda,#4b9c69 30%,#153122 66%,#06100a)}
+.p3{margin:28vh 0 0 -23vw;background:radial-gradient(circle at 32% 30%,#ffd9f0,#a6518c 30%,#391a32 66%,#0d060c)}
+.p4{margin:26vh 0 0 24vw;background:radial-gradient(circle at 32% 30%,#d6d3ff,#625cc2 30%,#211f48 66%,#080717)}
+
+.lines{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.lines line{stroke:rgba(255,255,255,.15);stroke-width:.12;vector-effect:non-scaling-stroke}
+.lines line.active{stroke:#f1c289;stroke-width:.55;filter:drop-shadow(0 0 5px #f1c289)}
+
+.detail{
+ position:absolute;z-index:25;right:6vw;top:50%;transform:translateY(-50%) translateX(30px);
+ width:min(420px,38vw);opacity:0;
+ border-top:1px solid rgba(255,255,255,.45);padding-top:20px;
+ transition:.35s;
+}
+.detail.show{opacity:1;transform:translateY(-50%) translateX(0)}
+.detail .n{font-size:10px;letter-spacing:.3em;color:#d6b07d}
+.detail h3{font-size:clamp(34px,4vw,62px);font-weight:500;letter-spacing:-.045em;margin:10px 0 8px}
+.detail .type{font-size:10px;letter-spacing:.2em;color:#9ba3af;margin-bottom:25px}
+.detail p{font-size:14px;line-height:2;color:#c4c8cf}
+.detail .link{display:inline-block;margin-top:20px;border-bottom:1px solid #fff;padding-bottom:5px;font-size:11px;letter-spacing:.16em}
+
+.side-index{
+ position:absolute;z-index:30;left:3vw;bottom:5vh;display:flex;gap:8px;align-items:center
+}
+.side-index span{width:25px;height:1px;background:#555;transition:.3s}
+.side-index span.on{width:54px;background:#fff}
+
+.section-white{
+ min-height:100vh;background:var(--white);color:var(--black);padding:14vh 6vw;
+}
+.section-white .head{font-size:11px;letter-spacing:.28em;margin-bottom:9vh}
+.section-white h2{
+ font-size:clamp(55px,9vw,138px);line-height:.9;letter-spacing:-.07em;font-weight:500;margin:0 0 8vh;
+}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#bbb;border:1px solid #bbb}
+.cell{background:var(--white);min-height:260px;padding:30px}
+.cell small{font-size:10px;letter-spacing:.18em;color:#777}
+.cell h3{font-size:26px;font-weight:500;margin:55px 0 12px}
+.cell p{font-size:13px;line-height:1.9;color:#555}
+
+.footer{
+ min-height:72vh;padding:12vh 6vw;background:#070707;color:#fff;
+ display:flex;flex-direction:column;justify-content:space-between
+}
+.footer h2{font-size:clamp(58px,9vw,140px);line-height:.9;letter-spacing:-.06em;font-weight:500;margin:0}
+.footer-bottom{display:flex;justify-content:space-between;border-top:1px solid #333;padding-top:22px;color:#9b9b9b;font-size:11px}
+
+@media(max-width:800px){
+ header{padding:0 18px}.menu{display:none}
+ .hero{padding:0 6vw 8vh}.hero h1{font-size:20vw}
+ .hero-bottom{display:block}.scroll-label{display:none}
+ .statement{grid-template-columns:1fr;padding:12vh 6vw}
+ .statement h2{font-size:17vw}
+ .constellation-wrap{height:720vh}
+ .constellation-intro{left:6vw;right:6vw}
+ .constellation-intro h2{font-size:16vw}
+ .planet{width:68px;height:68px}
+ .p0{margin:-23vh 0 0 -3vw}
+ .p1{margin:-2vh 0 0 -32vw}
+ .p2{margin:-2vh 0 0 31vw}
+ .p3{margin:22vh 0 0 -22vw}
+ .p4{margin:22vh 0 0 22vw}
+ .detail{left:6vw;right:6vw;top:auto;bottom:8vh;width:auto;transform:translateY(30px)}
+ .detail.show{transform:translateY(0)}
+ .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">RECONT NODE</div>
+ <nav class="menu"><a>ABOUT</a><a>BUSINESS</a><a>COMPANY</a><a>CONTACT</a></nav>
+</header>
+
+<section class="hero">
+ <div class="hero-bg"></div>
+ <div class="hero-stars"></div>
+ <div class="hero-copy">
+   <div class="micro">Discover / Connect / Grow</div>
+   <h1>Find the<br>unseen value.</h1>
+   <div class="hero-bottom">
+     <p>人、店、身体、場所、課題。<br>まだ誰も価値と呼んでいない「点」を見つけ、つなぎ、事業にする。</p>
+     <div class="scroll-label">SCROLL</div>
+   </div>
+ </div>
+</section>
+
+<section class="statement">
+ <div><div class="label">OUR IDEA / 01</div></div>
+ <div>
+   <h2>点は、<br>線になる。</h2>
+   <p>価値は、最初から完成した姿では存在しない。Recont Nodeは、埋もれている人・場所・技術・サービス・課題を見つけ、それぞれをつなぐことで、新しい事業のかたちをつくります。</p>
+ </div>
+</section>
+
+<div class="marquee">
+ <div class="marquee-track">
+   <span>MATCH POMP</span><span>ゑむず</span><span>中村鍼灸整体院</span><span>MAYRO PILATES</span><span>よろず</span>
+   <span>MATCH POMP</span><span>ゑむず</span><span>中村鍼灸整体院</span><span>MAYRO PILATES</span><span>よろず</span>
+ </div>
+</div>
+
+<section class="constellation-wrap" id="story">
+ <div class="constellation">
+   <div class="constellation-stars"></div>
+
+   <div class="constellation-intro" id="intro">
+     <div class="micro">BUSINESS / 02</div>
+     <h2>5つの点が、<br>ひとつの生態系になる。</h2>
+     <p>スクロールすると、それぞれの事業へ近づいていきます。</p>
+   </div>
+
+   <div class="space" id="space">
+     <svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+       <line id="line0" x1="50" y1="50" x2="42" y2="21"/>
+       <line id="line1" x1="50" y1="50" x2="19" y2="47"/>
+       <line id="line2" x1="50" y1="50" x2="81" y2="49"/>
+       <line id="line3" x1="50" y1="50" x2="27" y2="78"/>
+       <line id="line4" x1="50" y1="50" x2="74" y2="76"/>
+     </svg>
+     <div class="center">RECONT<br>NODE</div>
+     <div class="planet p0" data-i="0"><span class="planet-name">Match Pomp</span></div>
+     <div class="planet p1" data-i="1"><span class="planet-name">ゑむず</span></div>
+     <div class="planet p2" data-i="2"><span class="planet-name">中村鍼灸整体院</span></div>
+     <div class="planet p3" data-i="3"><span class="planet-name">Mayro</span></div>
+     <div class="planet p4" data-i="4"><span class="planet-name">よろず</span></div>
+   </div>
+
+   <article class="detail" id="detail">
+     <div class="n" id="dn">01 / 05</div>
+     <h3 id="dname"></h3>
+     <div class="type" id="dtype"></div>
+     <p id="dtext"></p>
+     <a class="link">VIEW BUSINESS →</a>
+   </article>
+
+   <div class="side-index" id="index">
+     <span></span><span></span><span></span><span></span><span></span>
+   </div>
+ </div>
+</section>
+
+<section class="section-white">
+ <div class="head">HOW WE CONNECT / 03</div>
+ <h2>Find.<br>Connect.<br>Grow.</h2>
+ <div class="grid">
+   <div class="cell"><small>01 / FIND</small><h3>見つける</h3><p>まだ名前のついていない価値や、現場に眠る小さな可能性を発見する。</p></div>
+   <div class="cell"><small>02 / CONNECT</small><h3>つなぐ</h3><p>人・場所・顧客・ノウハウを横断し、新しい関係と流れを生み出す。</p></div>
+   <div class="cell"><small>03 / GROW</small><h3>育てる</h3><p>つながった価値を、一過性で終わらせず持続する事業へ育てる。</p></div>
+ </div>
+</section>
+
+<footer class="footer">
+ <div>
+   <div class="micro">RECONT NODE</div>
+   <h2>Next node,<br>next future.</h2>
+ </div>
+ <div class="footer-bottom"><span>CONTACT / COMPANY</span><span>© RECONT NODE</span></div>
+</footer>
+
+<script>
+const businesses=[
+ {name:"Match Pomp",type:"INTERFACE / COMMUNITY",text:"人と人が出逢い、才能や個性が交わる接点をつくる。偶然の出会いから、新しい活動や挑戦が生まれる土壌を育てる事業。"},
+ {name:"ゑむず",type:"FOOD / HOSPITALITY",text:"食と場を通じて、人と人が自然につながる。料理そのものだけではなく、同じ場所で時間を共有することを価値に変える飲食事業。"},
+ {name:"中村鍼灸整体院",type:"WELLNESS / BODY CARE",text:"身体の不調に向き合い、その人が本来持つ動きや回復力を引き出す。日常のコンディションを支えるウェルネス事業。"},
+ {name:"Mayro",type:"PILATES / CONDITIONING",text:"ピラティスを通じて身体の軸を整え、心地よく動ける状態へ。身体と心を整えるコンディショニング事業。"},
+ {name:"よろず",type:"BUSINESS SUPPORT",text:"各事業を横断して、現場にある小さな課題を拾う。解決するだけでなく、その先に眠る次の事業機会へつなげる支援事業。"}
+];
+
+const story=document.getElementById("story");
+const space=document.getElementById("space");
+const intro=document.getElementById("intro");
+const detail=document.getElementById("detail");
+const planets=[...document.querySelectorAll(".planet")];
+const lines=[...document.querySelectorAll(".lines line")];
+const bars=[...document.querySelectorAll("#index span")];
+
+const dn=document.getElementById("dn");
+const dname=document.getElementById("dname");
+const dtype=document.getElementById("dtype");
+const dtext=document.getElementById("dtext");
+
+let current=-1;
+let latestProgress=0;
+let ticking=false;
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>1-Math.pow(1-t,3);
+const smoothstep=t=>t*t*(3-2*t);
+
+/*
+  各惑星の位置を「画面中央からの割合」で固定。
+  transform後のDOM座標を参照しないので、
+  カメラ移動が相殺されない。
+*/
+const desktopPos=[
+  {x:-0.08,y:-0.29}, // Match Pomp
+  {x:-0.31,y:-0.03}, // ゑむず
+  {x: 0.31,y:-0.01}, // 中村
+  {x:-0.23,y: 0.28}, // Mayro
+  {x: 0.24,y: 0.26}  // よろず
+];
+
+const mobilePos=[
+  {x:-0.03,y:-0.23},
+  {x:-0.32,y:-0.02},
+  {x: 0.31,y:-0.02},
+  {x:-0.22,y: 0.22},
+  {x: 0.22,y: 0.22}
+];
+
+function setBusiness(i){
+  if(i===current) return;
+  current=i;
+
+  const b=businesses[i];
+  dn.textContent=String(i+1).padStart(2,"0")+" / 05";
+  dname.textContent=b.name;
+  dtype.textContent=b.type;
+  dtext.textContent=b.text;
+
+  planets.forEach((p,x)=>{
+    p.style.opacity=x===i ? "1" : ".22";
+    p.style.filter=x===i ? "brightness(1.25)" : "brightness(.5)";
+  });
+
+  lines.forEach((l,x)=>l.classList.toggle("active",x===i));
+  bars.forEach((b,x)=>b.classList.toggle("on",x===i));
+}
+
+function resetOverview(){
+  intro.classList.remove("hide");
+  detail.classList.remove("show");
+  space.style.transform="translate3d(0,0,0) scale(1)";
+  planets.forEach(p=>{
+    p.style.opacity="1";
+    p.style.filter="brightness(1)";
+  });
+  lines.forEach(l=>l.classList.remove("active"));
+  bars.forEach(b=>b.classList.remove("on"));
+  current=-1;
+}
+
+function render(){
+  ticking=false;
+
+  const rect=story.getBoundingClientRect();
+  const total=Math.max(1,story.offsetHeight-window.innerHeight);
+  const progress=clamp((-rect.top)/total,0,1);
+  latestProgress=progress;
+
+  // 最初の約8%は全体を見せる
+  const introEnd=.08;
+
+  if(progress<introEnd){
+    resetOverview();
+    return;
+  }
+
+  intro.classList.add("hide");
+
+  const local=clamp((progress-introEnd)/(1-introEnd),0,1);
+  const count=businesses.length;
+  const segment=1/count;
+
+  const i=Math.min(count-1,Math.floor(local/segment));
+  const segStart=i*segment;
+  const segProgress=clamp((local-segStart)/segment,0,1);
+
+  setBusiness(i);
+
+  const mobile=window.innerWidth<800;
+  const positions=mobile?mobilePos:desktopPos;
+  const pos=positions[i];
+
+  /*
+    1. 0〜25%: 全体から対象惑星へ一気にズーム
+    2. 25〜75%: その惑星に滞在
+    3. 75〜100%: 少し引いて次の惑星へ
+  */
+  const zoomIn=ease(clamp(segProgress/.25,0,1));
+  const zoomOut=i<count-1 ? ease(clamp((segProgress-.75)/.25,0,1)) : 0;
+
+  const peakScale=mobile?3.3:4.8;
+  let scale=lerp(1,peakScale,zoomIn);
+  scale=lerp(scale,i<count-1?1.55:peakScale,zoomOut);
+
+  // 対象惑星をPCでは左寄り、スマホでは上寄りに配置
+  const targetX=mobile ? window.innerWidth*.50 : window.innerWidth*.33;
+  const targetY=mobile ? window.innerHeight*.31 : window.innerHeight*.50;
+
+  const planetX=window.innerWidth*(.5+pos.x);
+  const planetY=window.innerHeight*(.5+pos.y);
+
+  /*
+    scaleはtransform-origin:centerなので、
+    画面中央基準で「対象惑星がどこへ動くか」を計算。
+  */
+  const cx=window.innerWidth/2;
+  const cy=window.innerHeight/2;
+
+  const scaledPlanetX=cx+(planetX-cx)*scale;
+  const scaledPlanetY=cy+(planetY-cy)*scale;
+
+  let dx=targetX-scaledPlanetX;
+  let dy=targetY-scaledPlanetY;
+
+  dx*=zoomIn;
+  dy*=zoomIn;
+
+  dx=lerp(dx,0,zoomOut);
+  dy=lerp(dy,0,zoomOut);
+
+  space.style.transform=
+    `translate3d(${dx.toFixed(1)}px,${dy.toFixed(1)}px,0) scale(${scale.toFixed(3)})`;
+
+  detail.classList.toggle("show",segProgress>.18 && (i===count-1 || segProgress<.86));
+}
+
+function requestRender(){
+  if(!ticking){
+    ticking=true;
+    requestAnimationFrame(render);
+  }
+}
+
+window.addEventListener("scroll",requestRender,{passive:true});
+window.addEventListener("resize",requestRender);
+window.addEventListener("load",requestRender);
+requestRender();
+</script>
+</body>
+</html>
